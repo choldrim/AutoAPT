@@ -1,8 +1,7 @@
-<<<<<<< HEAD
+# for AutoAPT self
 *.db
-*.pyc
 *.rd
-=======
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -57,4 +56,3 @@ docs/_build/
 
 # PyBuilder
 target/
->>>>>>> 8af00ec3afafacf10e2fd8f1af1c62517af9fa08
