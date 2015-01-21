@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# aptinstall.py
 
 import apt
 import apt_pkg
@@ -107,22 +106,23 @@ class AutoAPT(object):
             else:
                 pkg_name = p.get_fullname()
 
-            print "\npackage: %s"%pkg_name
+            #print "\npackage: %s"%pkg_name
 
             try:
                 # get package
                 if pkg_name not in self.apt_cache:
                     # I think it should be done sth here.
-                    print ("Package (%s) not found in apt's cache"%pkg_name)
+                    #print ("Package (%s) not found in apt's cache"%pkg_name)
                     continue
                 package = self.apt_cache[pkg_name] 
 
                 if self.with_filter:
                     if not self.package_filter(p):
-                        print "Not in the detection range, skip"
+                        #print "Not in the detection range, skip"
                         continue
                     else:
-                        print "package: %s " %pkg_name
+                        pass
+                        #print "package: %s " %pkg_name
                         #quit()
 
                 # get package name
@@ -130,11 +130,10 @@ class AutoAPT(object):
 
                 # ckeck broken
                 package.mark_install()
-                print "package: %s, through"%pkg_name
+                #print "package: %s, through"%pkg_name
              
             except SystemError, e:
-                print  " *** Package check not through *** \n \
-                 error: \n [%s]" %str(e)
+                print  "\n*** Package: %s not through *** \n error:[%s]" %(pkg_name, str(e))
                 self.record(pkg_name, str(e))
                 self.apt_cache.clear()
 
@@ -148,9 +147,7 @@ class AutoAPT(object):
 
 
 if __name__ == '__main__':
-
     parser = OptionParser()
-
     parser.add_option("-m", metavar="CHECK_MODE", dest="check_mode", help="cb: check broken package. cf: check installed files of debs", type="string", action="store")
 
     parser.add_option("-f", dest="with_filter", action="store_true",help="filter packages")
