@@ -8,8 +8,10 @@ from optparse import OptionParser
 class AutoAPT(object):
     """AutoAPT: a series of auto tests for package system"""
 
-    def __init__(self, work_mode, with_filter = False):
+    def __init__(self):
         super(AutoAPT, self).__init__()
+
+        (work_mode, with_filter) = self.usage()
  
         self.work_mode_map = {
             "CHECK_BROKEN": self.check_broken,
@@ -92,7 +94,48 @@ class AutoAPT(object):
         return False
 
     def usage(self, **args):
-        print "help .... "
+        parser = OptionParser()
+        parser.add_option("-m", metavar="CHECK_MODE", dest="check_mode", help="cb: check broken package. cf: check installed files of debs", type="string", action="store")
+
+        parser.add_option("-f", dest="with_filter", action="store_true",help="filter packages")
+        (options, args) = parser.parse_args()
+
+        mode = None
+        arg_mode = options.check_mode
+        if arg_mode == "cb":
+            mode = "CHECK_BROKEN"
+        elif arg_mode == "cf":
+            mode = "CHECK_INST_FILES"
+
+        with_filter = options.with_filter
+        if None in (mode, with_filter):
+            parser.print_help()
+            quit()
+
+        return mode, with_filter
+
+        
+    def check_complete_virtual(self, pkg):
+        if pkg.get_fullname() not in self.apt_cache:
+            # meet a complete virtual pkg
+            return False
+        
+        depend_list = self.get_all_dependency_list(pkg)
+        for dep in depend_list:
+            if len(dep.all_targets()) == 0:
+                return False
+
+        return True
+
+    def get_all_dependency_list(self, pkg):
+        depend_list = []
+        for ver in pkg.version_list:
+            for depends in ver.depends_list.values():
+                for depend in depends:
+                    depend_list.append(depend[0])
+
+        return depend_list
+
        
     def check_broken(self):
         # all packages
@@ -128,6 +171,7 @@ class AutoAPT(object):
 
                 # ckeck broken
                 package.mark_install()
+                
                 #print "package: %s, through"%pkg_name
              
             except SystemError, e:
@@ -146,23 +190,5 @@ class AutoAPT(object):
         self.record_file.write(write_str)
 
 
-if __name__ == '__main__':
-    parser = OptionParser()
-    parser.add_option("-m", metavar="CHECK_MODE", dest="check_mode", help="cb: check broken package. cf: check installed files of debs", type="string", action="store")
-
-    parser.add_option("-f", dest="with_filter", action="store_true",help="filter packages")
-    (options, args) = parser.parse_args()
-
-    mode = None
-    arg_mode = options.check_mode
-    if arg_mode == "cb":
-        mode = "CHECK_BROKEN"
-    elif arg_mode == "cf":
-        mode = "CHECK_INST_FILES"
-
-    with_filter = options.with_filter
-    if None in (mode, with_filter):
-        parser.print_help()
-        quit()
-
-    at = AutoAPT(mode, True)
+if __name__ == '__main__': 
+    at = AutoAPT()
