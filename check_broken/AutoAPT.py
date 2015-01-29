@@ -5,15 +5,14 @@ import apt_pkg
 import platform
 from optparse import OptionParser
 
-class AutoAPT(object):
+class CheckBroken(object):
     """AutoAPT: a series of auto tests for package system"""
 
     def __init__(self, work_mode, with_filter = False):
-        super(AutoAPT, self).__init__()
+        super(CheckBroken, self).__init__()
  
         self.work_mode_map = {
             "CHECK_BROKEN": self.check_broken,
-            "CHECK_INST_FILES": self.check_inst_files,
             "USAGE":self.usage,
         }
 
@@ -71,6 +70,7 @@ class AutoAPT(object):
         """
         version_list = pkg_package.version_list
 
+
         # get pkg version
         version = version_list[0]
         file_list = version.file_list
@@ -110,8 +110,9 @@ class AutoAPT(object):
             try:
                 # get package
                 if pkg_name not in self.apt_cache:
+                    # I think it should be done sth here.
+                    #print ("Package (%s) not found in apt's cache"%pkg_name)
                     continue
-
                 package = self.apt_cache[pkg_name] 
 
                 if self.with_filter:
@@ -132,14 +133,8 @@ class AutoAPT(object):
              
             except SystemError, e:
                 print  "\n*** Package: %s not through *** \n error:[%s]" %(pkg_name, str(e))
-                print self.apt_cache.broken_count
-                if self.apt_cache.broken_count != 0:
-                    self.record(pkg_name, str(e))
-                    self.apt_cache.clear()
-
-    def check_inst_files(self):
-        print "check_installed_files"
-        quit()
+                self.record(pkg_name, str(e))
+                self.apt_cache.clear()
 
     def record(self, pkg_name, err):
         write_str = "Package: %s\nErrorInfo: %s\n\n" %(pkg_name, err)
@@ -165,4 +160,4 @@ if __name__ == '__main__':
         parser.print_help()
         quit()
 
-    at = AutoAPT(mode, True)
+    at = CheckBroken(mode, True)
