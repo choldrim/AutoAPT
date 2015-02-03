@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # coding=utf-8
 
 import apt
@@ -8,9 +7,12 @@ import apt_pkg
 class CheckBroken():
 
     def __init__(self):
+        self.record_file = open("brokenPkgs.txt", "w+")
+
         self.apt_cache = apt.Cache()
         self.pkg_cache = apt_pkg.Cache()
         self.work()
+        
 
     def init_sys(self):
         self.apt_cache = apt.Cache()
@@ -30,7 +32,7 @@ class CheckBroken():
                 if depcache.is_auto_installed(ver.parent_pkg):
                     if confirm:
                         print("\nCatch broken pkg:\n %s\n\nbecause the follow marked-auto-install pkg, but it is a conflicted pkg:\n %s\n."%(pkg.get_fullname(), ver.parent_pkg.get_fullname()))
-                        quit()
+                        self.record_file.write("%s\n"%pkg.get_fullname())
                     else:
                         print("need to confirm...")
                         self.init_sys()
