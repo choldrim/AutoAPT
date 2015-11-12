@@ -12,7 +12,7 @@ class AutoAPT(object):
         super(AutoAPT, self).__init__()
 
         (work_mode, with_filter) = self.usage()
- 
+
         self.work_mode_map = {
             "CHECK_BROKEN": self.check_broken,
             "CHECK_INST_FILES": self.check_inst_files,
@@ -28,7 +28,7 @@ class AutoAPT(object):
 
         # construct file filters
         self.file_filter = ["Deepin",]
- 
+
         # if just check the pkgs in included by file_filter
         self.with_filter = with_filter
         self.filter_filenames = self.get_filter_filenames()
@@ -95,7 +95,7 @@ class AutoAPT(object):
 
     def usage(self, **args):
         parser = OptionParser()
-        parser.add_option("-m", metavar="CHECK_MODE", dest="check_mode", help="cb: check broken package. cf: check installed files of debs", type="string", action="store")
+        parser.add_option("-m", metavar="[cb|cf] ", dest="check_mode", help="CHECK_MODE cb: check broken package. cf: check installed files of debs", type="string", action="store")
 
         parser.add_option("-f", dest="with_filter", action="store_true",help="filter packages")
         (options, args) = parser.parse_args()
@@ -114,12 +114,12 @@ class AutoAPT(object):
 
         return mode, with_filter
 
-        
+
     def check_complete_virtual(self, pkg):
         if pkg.get_fullname() not in self.apt_cache:
             # meet a complete virtual pkg
             return False
-        
+
         depend_list = self.get_all_dependency_list(pkg)
         for dep in depend_list:
             if len(dep.all_targets()) == 0:
@@ -136,7 +136,7 @@ class AutoAPT(object):
 
         return depend_list
 
-       
+
     def check_broken(self):
         # all packages
         packages = self.pkg_cache.packages
@@ -155,7 +155,7 @@ class AutoAPT(object):
                 if pkg_name not in self.apt_cache:
                     continue
 
-                package = self.apt_cache[pkg_name] 
+                package = self.apt_cache[pkg_name]
 
                 if self.with_filter:
                     if not self.package_filter(p):
@@ -171,9 +171,9 @@ class AutoAPT(object):
 
                 # ckeck broken
                 package.mark_install()
-                
+
                 #print "package: %s, through"%pkg_name
-             
+
             except SystemError, e:
                 print  "\n*** Package: %s not through *** \n error:[%s]" %(pkg_name, str(e))
                 print self.apt_cache.broken_count
@@ -190,5 +190,5 @@ class AutoAPT(object):
         self.record_file.write(write_str)
 
 
-if __name__ == '__main__': 
+if __name__ == '__main__':
     at = AutoAPT()
