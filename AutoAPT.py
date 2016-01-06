@@ -27,7 +27,7 @@ class AutoAPT(object):
         self.apt_cache = apt.cache.Cache()
 
         # construct file filters
-        self.file_filter = ["Deepin",]
+        self.file_filter = ["deepin",]
 
         # if just check the pkgs in included by file_filter
         self.with_filter = with_filter
