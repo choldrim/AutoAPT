@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import apt
 import apt_pkg
@@ -49,7 +49,7 @@ class AutoAPT(object):
         elif sys_pf[0] == "32bit":
             return "i386"
         else:
-            print "Unknow system platform.\n %s"%sys_pf[0]
+            print("Unknow system platform.\n %s"%sys_pf[0])
             quit()
 
     def get_filter_filenames(self):
@@ -148,7 +148,7 @@ class AutoAPT(object):
             else:
                 pkg_name = p.get_fullname()
 
-            #print "\npackage: %s"%pkg_name
+            print("\npackage: %s"%pkg_name)
 
             try:
                 # get package
@@ -174,15 +174,15 @@ class AutoAPT(object):
 
                 #print "package: %s, through"%pkg_name
 
-            except SystemError, e:
-                print  "\n*** Package: %s not through *** \n error:[%s]" %(pkg_name, str(e))
-                print self.apt_cache.broken_count
+            except SystemError as e:
+                print("\n*** Package: %s not through *** \n error:[%s]" %(pkg_name, str(e)))
+                print(self.apt_cache.broken_count)
                 if self.apt_cache.broken_count != 0:
                     self.record(pkg_name, str(e))
                     self.apt_cache.clear()
 
     def check_inst_files(self):
-        print "check_installed_files"
+        print("check_installed_files")
         quit()
 
     def record(self, pkg_name, err):
